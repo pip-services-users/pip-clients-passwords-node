@@ -6,20 +6,17 @@ and provides high-level API to access the microservice for simple and productive
 
 * [Installation](#install)
 * [Getting started](#get_started)
-* [UserPassword class](#class1)
-* [IPasswordsClient interface](#interface)
-    - [init()](#operation1)
-    - [open()](#operation2)
-    - [close()](#operation3)
-    - [setPassword()](#operation4)
-    - [deletePassword()](#operation5)
-    - [authenticate()](#operation6)
-    - [changePassword()](#operation7)
-    - [resetPassword()](#operation8)
-    - [recoverPassword()](#operation9)
-* [PasswordsRestClient class](#client_rest)
-* [PasswordsSenecaClient class](#client_seneca)
-* [PasswordsNullClient class](#client_null)
+* [IPasswordsClientV1 interface](#interface)
+    - [setPassword()](#operation1)
+    - [deletePassword()](#operation2)
+    - [authenticate()](#operation3)
+    - [changePassword()](#operation4)
+    - [resetPassword()](#operation5)
+    - [recoverPassword()](#operation6)
+* [PasswordsHttpClientV1 class](#client_rest)
+* [PasswordsSenecaClientV1 class](#client_seneca)
+* [PasswordsDirectClientV1 class](#client_direct)
+* [PasswordsNullClientV1 class](#client_null)
 
 ## <a name="install"></a> Installation
 
@@ -30,7 +27,7 @@ To work with the client SDK add dependency into package.json file:
     ...
     "dependencies": {
         ....
-        "pip-clients-passwords-node": "git+ssh://git@github.com:pip-services/pip-clients-passwords-node.git",
+        "pip-clients-passwords-node": "^1.0.*",
         ...
     }
 }
@@ -46,33 +43,28 @@ npm install
 npm update
 ```
 
-If you are using Typescript, add the following type definition where compiler can find it
-```javascript
-/// <reference path="../node_modules/pip-clients-passwords-node/module.d.ts" />
-```
-
 ## <a name="get_started"></a> Getting started
 
 This is a simple example on how to work with the microservice using REST client:
 
 ```javascript
 // Get Client SDK for Version 1 
-var sdk = new require('pip-clients-passwords-node').Version1;
+var sdk = new require('pip-clients-passwords-node');
 
 // Client configuration
 var config = {
-    transport: {
-        type: 'http',
+    connection: {
+        protocol: 'http',
         host: 'localhost', 
         port: 8013
     }
 };
 
 // Create the client instance
-var client = sdk.PasswordsRestClient(config);
+var client = sdk.PasswordsHttpClientV1(config);
 
 // Open client connection to the microservice
-client.open(function(err) {
+client.open(null, function(err) {
     if (err) {
         console.error(err);
         return; 
@@ -84,30 +76,27 @@ client.open(function(err) {
     client.setPassword(
         '123',
         'test123',
-        function (err, userPassword) {
+        function (err) {
             if (err) {
                 console.error(err);
                 return;
             }
             
-            console.log('User password object is');
-            console.log(userPassword);
-            
             // Authenticate user
             client.authenticate(
                 '123',
                 'test123',
-                function(err, userPassword) {
+                function(err, autnenticated) {
                     if (err) {
                         console.error(err);
                         return;
                     }
                     
-                    console.log('Authenticated user password object is');
-                    console.log(userPassword);
+                    console.log('Authentication result is');
+                    console.log(authentication);
                     
                     // Close connection
-                    client.close(); 
+                    client.close(null); 
                 }
             );
         }
@@ -115,204 +104,168 @@ client.open(function(err) {
 });
 ```
 
-## Data types
-
-### <a name="class1"></a> UserPassword class
-
-Represents a user password state with his ID, password hash and key settings.
-It also tracks authentication attempts and recovery code. 
-
-**Properties:**
-- id: string - unique user id
-- password: string - SHA256 hash for user password (password isn't stored for security)
-- lock: boolean - true if user account was temporary locked after few failed authentication attempts
-- lock_until: Date - date and time when lock expires
-- pwd_fail_count: int - number of sequential failed attempts
-- pwd_last_fail: Date - date and time of the last failed attempt
-- pwd_rec_code: string - password recovery code that was sent to user in email message
-- pwd_rec_expire: Date - date and time when password recovery code expires
-- custom_hdr: Object - custom data summary that is always returned (in list and details)
-- custom_dat: Object - custom data details that is returned only when a single object is returned (details)
-
-## <a name="interface"></a> IPasswordsClient interface
+## <a name="interface"></a> IPasswordsClientV1 interface
 
 If you are using Typescript, you can use IPasswordsClient as a common interface across all client implementations. 
 If you are using plain Javascript, you shall not worry about IPasswordsClient interface. You can just expect that
 all methods defined in this interface are implemented by all client classes.
 
 ```javascript
-interface IPasswordsClient {
-    init(refs);
-    open(callback);
-    close(callback);
-    setPassword(userId, password, callback);
-    deletePassword(userId, callback);
-    authenticate(userId, password, callback);
-    changePassword(userId, oldPassword, newPassword, callback);
-    resetPassword(userId, code, password, callback);
-    recoverPassword(userId, callback);
+interface IPasswordsClientV1 {
+    setPassword(correlationId, userId, password, callback);
+    deletePassword(correlationId, userId, callback);
+    authenticate(correlationId, userId, password, callback);
+    changePassword(correlationId, userId, oldPassword, newPassword, callback);
+    resetPassword(correlationId, userId, code, password, callback);
+    recoverPassword(correlationId, userId, callback);
 }
 ```
 
-### <a name="operation1"></a> init(refs)
-
-Initializes client references. This method is optional. It is used to set references 
-to logger or performance counters.
-
-**Arguments:**
-- refs: References - references to other components 
-  - log: ILog - reference to logger
-  - countes: ICounters - reference to performance counters
-
-### <a name="operation2"></a> open(callback)
-
-Opens connection to the microservice
-
-**Arguments:**
-- callback: (err) => void - callback function
-  - err - Error or null is no error occured
-
-### <a name="operation3"></a> close(callback)
-
-Closes connection to the microservice
-
-**Arguments:**
-- callback: (err) => void - callback function
-  - err - Error or null is no error occured
-
-### <a name="operation4"></a> setPassword(userId, password, callback)
+### <a name="operation1"></a> setPassword(correlationId, userId, password, callback)
 
 Sets password for a new user in the system and creates an object for him.
 
 **Arguments:** 
+- correlationId: string - id that uniquely identifies transaction
 - userId: string - unique user id generated by the client
 - password: string - user password
 - callback: (err, userPassword) => void - callback function
   - err: Error - occured error or null for success
-  - userPassword: UserPassword - created UserPassword object
  
-### <a name="operation5"></a> deletePassword(userId, callback)
+### <a name="operation2"></a> deletePassword(correlationId, userId, callback)
 
 Deletes user password from the system (use it carefully!)
 
 **Arguments:** 
+- correlationId: string - id that uniquely identifies transaction
 - userId: string - unique user id
 - callback: (err) => void - callback function
   - err: Error - occured error or null for success
 
-### <a name="operation6"></a> authenticate(userId, password, callback)
+### <a name="operation3"></a> authenticate(correlationId, userId, password, callback)
 
 Authenticates user using ID/password combination and returns user object.
 
 **Arguments:** 
+- correlationId: string - id that uniquely identifies transaction
 - userId: string - unique user id to identify the user
 - password: string - user password
 - callback: (err, userPassword) => void - callback function
   - err: Error - occured error or null for success
-  - userPassword: UserPassword - UserPassword object when authentication was successful
+  - authenticated: boolean - True when authentication was successful
  
-### <a name="operation7"></a> changePassword(userId, oldPassword, newPassword, callback)
+### <a name="operation4"></a> changePassword(correlationId, userId, oldPassword, newPassword, callback)
 
 Changes user password by providing old password
 
 **Arguments:** 
+- correlationId: string - id that uniquely identifies transaction
 - userId: string - unique user id to identify the user
 - oldPassword: string - old user password
 - newPassword: string - new user password
 - callback: (err, userPassword) => void - callback function
   - err: Error - occured error or null for success
-  - userPassword: UserPassword - updated UserPassword object
 
-### <a name="operation8"></a> resetPassword(userId, code, password, callback)
+### <a name="operation5"></a> resetPassword(correlationId, userId, code, password, callback)
 
 Resets user password by providing recovery code
 
 **Arguments:** 
+- correlationId: string - id that uniquely identifies transaction
 - userId: string - unique user id to identify the user
 - code: string - password recovery code
 - password: string - new user password
 - callback: (err, userPassword) => void - callback function
   - err: Error - occured error or null for success
-  - userPassword: UserPassword - updated UserPassword object
 
-### <a name="operation9"></a> recoverPassword(userId, callback)
+### <a name="operation6"></a> recoverPassword(correlationId, userId, callback)
 
 Generates password recovery code for the user and sends it via email
 
 **Arguments:** 
+- correlationId: string - id that uniquely identifies transaction
 - userId: string - unique user id to identify the user
 - callback: (err, code) => void - callback function
   - err: Error - occured error or null for success
-  - code: string - password recovery code
 
-## <a name="client_rest"></a> PasswordsRestClient class
+## <a name="client_rest"></a> PasswordsHttpClientV1 class
 
-PasswordsRestClient is a client that implements HTTP/REST protocol
+PasswordsHttpClient is a client that implements HTTP protocol
 
 ```javascript
-class PasswordsRestClient extends RestClient implements IPasswordsClient {
+class PasswordsHttpClientV1 extends CommandableHttpClient implements IPasswordsClient {
     constructor(config: any);
-    init(refs);
-    open(callback);
-    close(callback);
-    setPassword(userId, password, callback);
-    deletePassword(userId, callback);
-    authenticate(userId, password, callback);
-    changePassword(userId, oldPassword, newPassword, callback);
-    resetPassword(userId, code, password, callback);
-    recoverPassword(userId, callback);
+    setReferences(references);
+    open(correlationId, callback);
+    close(correlationId, callback);
+    setPassword(correlationId, userId, password, callback);
+    deletePassword(correlationId, userId, callback);
+    authenticate(correlationId, userId, password, callback);
+    changePassword(correlationId, userId, oldPassword, newPassword, callback);
+    resetPassword(correlationId, userId, code, password, callback);
+    recoverPassword(correlationId, userId, callback);
 }
 ```
 
 **Constructor config properties:** 
-- transport: object - HTTP transport configuration options
-  - type: string - HTTP protocol - 'http' or 'https' (default is 'http')
+- connection: object - HTTP transport configuration options
+  - protocol: string - HTTP protocol - 'http' or 'https' (default is 'http')
   - host: string - IP address/hostname binding (default is '0.0.0.0')
   - port: number - HTTP port number
 
-## <a name="client_seneca"></a> PasswordsSenecaClient class
+## <a name="client_seneca"></a> PasswordsSenecaClientV1 class
 
-PasswordsSenecaClient is a client that implements Seneca protocol
+PasswordsSenecaClientV1 is a client that implements Seneca protocol
 
 ```javascript
-class PasswordsSenecaClient extends SenecaClient implements IPasswordsClient {
+class PasswordsSenecaClientV1 extends CommandableSenecaClient implements IPasswordsClientV1 {
     constructor(config: any);        
-    init(refs);
-    open(callback);
-    close(callback);
-    setPassword(userId, password, callback);
-    deletePassword(userId, callback);
-    authenticate(userId, password, callback);
-    changePassword(userId, oldPassword, newPassword, callback);
-    resetPassword(userId, code, password, callback);
-    recoverPassword(userId, callback);
+    setReferences(references);
+    open(correlationId, callback);
+    close(correlationId, callback);
+    setPassword(correlationId, userId, password, callback);
+    deletePassword(correlationId, userId, callback);
+    authenticate(correlationId, userId, password, callback);
+    changePassword(correlationId, userId, oldPassword, newPassword, callback);
+    resetPassword(correlationId, userId, code, password, callback);
+    recoverPassword(correlationId, userId, callback);
 }
 ```
 
 **Constructor config properties:** 
-- transport: object - (optional) Seneca transport configuration options. See http://senecajs.org/api/ for details.
-  - type: string - Seneca transport type 
+- connection: object - (optional) Seneca transport configuration options. See http://senecajs.org/api/ for details.
+  - protocol: string - Seneca transport type 
   - host: string - IP address/hostname binding (default is '0.0.0.0')
   - port: number - Seneca port number
 
-## <a name="client_null"></a> PasswordsNullClient class
+## <a name="client_direct"></a> PasswordsDirectClientV1 class
 
-PasswordsNullClient is a null client for testing. It never fails and always returns a fake UserPassword object
+PasswordsDirectClientV1 is a null client for testing. It never fails and always returns a fake UserPassword object
 
 ```javascript
-class PasswordsNullClient extends AbstractClient implements IPasswordsClient {
+class PasswordsDirectClientV1 extends DirectClient implements IPasswordsClientV1 {
     constructor(config: any);        
-    init(refs);
-    open(callback);
-    close(callback);
-    setPassword(userId, password, callback);
-    deletePassword(userId, callback);
-    authenticate(userId, password, callback);
-    changePassword(userId, oldPassword, newPassword, callback);
-    resetPassword(userId, code, password, callback);
-    recoverPassword(userId, callback);
-}
+    setReferences(references);
+    open(correlationId, callback);
+    close(correlationId, callback);
+    setPassword(correlationId, userId, password, callback);
+    deletePassword(correlationId, userId, callback);
+    authenticate(correlationId, userId, password, callback);
+    changePassword(correlationId, userId, oldPassword, newPassword, callback);
+    resetPassword(correlationId, userId, code, password, callback);
+    recoverPassword(correlationId, userId, callback);
 ```
 
-**Constructor config properties:** 
-- ...
+## <a name="client_null"></a> PasswordsNullClientV1 class
+
+PasswordsNullClientV1 is a null client for testing. It never fails and always returns a fake UserPassword object
+
+```javascript
+class PasswordsNullClientV1 implements IPasswordsClientV1 {
+    setPassword(correlationId, userId, password, callback);
+    deletePassword(correlationId, userId, callback);
+    authenticate(correlationId, userId, password, callback);
+    changePassword(correlationId, userId, oldPassword, newPassword, callback);
+    resetPassword(correlationId, userId, code, password, callback);
+    recoverPassword(correlationId, userId, callback);
+```

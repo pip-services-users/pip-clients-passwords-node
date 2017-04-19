@@ -1,2 +1,2 @@
 export * from './version1';
-export { PasswordsFactory } from './build/PasswordsFactory';
+export { PasswordsClientFactory } from './build/PasswordsClientFactory';

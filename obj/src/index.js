@@ -4,6 +4,6 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./version1"));
-var PasswordsFactory_1 = require("./build/PasswordsFactory");
-exports.PasswordsFactory = PasswordsFactory_1.PasswordsFactory;
+var PasswordsClientFactory_1 = require("./build/PasswordsClientFactory");
+exports.PasswordsClientFactory = PasswordsClientFactory_1.PasswordsClientFactory;
 //# sourceMappingURL=index.js.map

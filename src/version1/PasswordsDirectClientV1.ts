@@ -7,7 +7,7 @@ import { DataPage } from 'pip-services-commons-node';
 import { DirectClient } from 'pip-services-net-node';
 
 import { IPasswordsClientV1 } from './IPasswordsClientV1';
-//import { IPasswordsBusinessLogic } from 'pip-services-passwords-node';
+//import { IPasswordsController } from 'pip-services-passwords-node';
 
 export class PasswordsDirectClientV1 extends DirectClient<any> implements IPasswordsClientV1 {
             

@@ -1,3 +1,4 @@
+export { UserPasswordInfoV1 } from './UserPasswordInfoV1';
 export { PasswordActivityTypeV1 } from './PasswordActivityTypeV1';
 export { IPasswordsClientV1 } from './IPasswordsClientV1';
 export { PasswordsHttpClientV1 } from './PasswordsHttpClientV1';

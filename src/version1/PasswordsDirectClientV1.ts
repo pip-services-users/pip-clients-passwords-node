@@ -6,6 +6,7 @@ import { PagingParams} from 'pip-services-commons-node';
 import { DataPage } from 'pip-services-commons-node';
 import { DirectClient } from 'pip-services-net-node';
 
+import { UserPasswordInfoV1 } from './UserPasswordInfoV1';
 import { IPasswordsClientV1 } from './IPasswordsClientV1';
 //import { IPasswordsController } from 'pip-services-passwords-node';
 
@@ -17,6 +18,24 @@ export class PasswordsDirectClientV1 extends DirectClient<any> implements IPassw
 
         if (config != null)
             this.configure(ConfigParams.fromValue(config));
+    }
+
+    public getPasswordInfo(correlationId: string, userId: string,
+        callback: (err: any, info: UserPasswordInfoV1) => void): void {
+        let timing = this.instrument(correlationId, 'passwords.get_password_info');
+        this._controller.getPasswordInfo(correlationId, userId, (err, info) => {
+            timing.endTiming();
+            callback(err, info);
+        });
+    }
+
+    public setTempPassword(correlationId: string, userId: string,
+        callback: (err: any, password: string) => void): void {
+        let timing = this.instrument(correlationId, 'passwords.set_temp_password');
+        this._controller.setTempPassword(correlationId, userId, (err, password) => {
+            timing.endTiming();
+            callback(err, password);
+        });
     }
 
     public setPassword(correlationId: string, userId: string, password: string,
@@ -52,6 +71,15 @@ export class PasswordsDirectClientV1 extends DirectClient<any> implements IPassw
         this._controller.changePassword(correlationId, userId, oldPassword, newPassword, (err) => {
             timing.endTiming();
             callback(err);
+        });
+    }
+
+    public validateCode(correlationId: string, userId: string, code: string,
+        callback: (err: any, valid: boolean) => void): void {
+        let timing = this.instrument(correlationId, 'passwords.validate_code');
+        this._controller.validateCode(correlationId, userId, code, (err, valid) => {
+            timing.endTiming();
+            callback(err, valid);
         });
     }
 

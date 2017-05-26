@@ -8,6 +8,16 @@ class PasswordsHttpClientV1 extends pip_services_net_node_1.CommandableHttpClien
         if (config != null)
             this.configure(pip_services_commons_node_1.ConfigParams.fromValue(config));
     }
+    getPasswordInfo(correlationId, userId, callback) {
+        this.callCommand('get_password_info', correlationId, {
+            user_id: userId
+        }, callback);
+    }
+    setTempPassword(correlationId, userId, callback) {
+        this.callCommand('set_temp_password', correlationId, {
+            user_id: userId
+        }, callback);
+    }
     setPassword(correlationId, userId, password, callback) {
         this.callCommand('set_password', correlationId, {
             user_id: userId,
@@ -34,6 +44,14 @@ class PasswordsHttpClientV1 extends pip_services_net_node_1.CommandableHttpClien
             old_password: oldPassword,
             new_password: newPassword
         }, callback);
+    }
+    validateCode(correlationId, userId, code, callback) {
+        this.callCommand('validate_code', correlationId, {
+            user_id: userId,
+            code: code
+        }, (err, result) => {
+            callback(err, result != null ? result.valid : null);
+        });
     }
     resetPassword(correlationId, userId, code, password, callback) {
         this.callCommand('reset_password', correlationId, {

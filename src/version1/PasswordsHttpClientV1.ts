@@ -5,6 +5,7 @@ import { PagingParams } from 'pip-services-commons-node';
 import { DataPage } from 'pip-services-commons-node';
 import { CommandableHttpClient } from 'pip-services-net-node';
 
+import { UserPasswordInfoV1 } from './UserPasswordInfoV1';
 import { IPasswordsClientV1 } from './IPasswordsClientV1';
 
 export class PasswordsHttpClientV1 extends CommandableHttpClient implements IPasswordsClientV1 {
@@ -16,6 +17,30 @@ export class PasswordsHttpClientV1 extends CommandableHttpClient implements IPas
             this.configure(ConfigParams.fromValue(config));
     }
         
+    public getPasswordInfo(correlationId: string, userId: string,
+        callback: (err: any, info: UserPasswordInfoV1) => void): void {
+        this.callCommand(
+            'get_password_info',
+            correlationId,
+            {
+                user_id: userId
+            },
+            callback
+        );    
+    }
+
+    public setTempPassword(correlationId: string, userId: string,
+        callback: (err: any, password: string) => void): void {
+        this.callCommand(
+            'set_temp_password',
+            correlationId,
+            {
+                user_id: userId
+            },
+            callback
+        );
+    }
+
     public setPassword(correlationId: string, userId: string, password: string,
         callback: (err: any) => void): void {
         this.callCommand(
@@ -68,6 +93,21 @@ export class PasswordsHttpClientV1 extends CommandableHttpClient implements IPas
                 new_password: newPassword
             },
             callback
+        );
+    }
+
+    public validateCode(correlationId: string, userId: string, code: string,
+        callback: (err: any, valid: boolean) => void): void {
+        this.callCommand(
+            'validate_code',
+            correlationId,
+            {
+                user_id: userId,
+                code: code
+            },
+            (err, result) => {
+                callback(err, result != null ? result.valid : null);
+            }
         );
     }
 

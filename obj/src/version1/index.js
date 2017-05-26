@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var UserPasswordInfoV1_1 = require("./UserPasswordInfoV1");
+exports.UserPasswordInfoV1 = UserPasswordInfoV1_1.UserPasswordInfoV1;
 var PasswordActivityTypeV1_1 = require("./PasswordActivityTypeV1");
 exports.PasswordActivityTypeV1 = PasswordActivityTypeV1_1.PasswordActivityTypeV1;
 var PasswordsHttpClientV1_1 = require("./PasswordsHttpClientV1");

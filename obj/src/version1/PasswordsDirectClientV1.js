@@ -3,13 +3,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const pip_services_commons_node_1 = require("pip-services-commons-node");
 const pip_services_commons_node_2 = require("pip-services-commons-node");
 const pip_services_net_node_1 = require("pip-services-net-node");
-//import { IPasswordsBusinessLogic } from 'pip-services-passwords-node';
+//import { IPasswordsController } from 'pip-services-passwords-node';
 class PasswordsDirectClientV1 extends pip_services_net_node_1.DirectClient {
     constructor(config) {
         super();
         this._dependencyResolver.put('controller', new pip_services_commons_node_2.Descriptor("pip-services-passwords", "controller", "*", "*", "*"));
         if (config != null)
             this.configure(pip_services_commons_node_1.ConfigParams.fromValue(config));
+    }
+    getPasswordInfo(correlationId, userId, callback) {
+        let timing = this.instrument(correlationId, 'passwords.get_password_info');
+        this._controller.getPasswordInfo(correlationId, userId, (err, info) => {
+            timing.endTiming();
+            callback(err, info);
+        });
+    }
+    setTempPassword(correlationId, userId, callback) {
+        let timing = this.instrument(correlationId, 'passwords.set_temp_password');
+        this._controller.setTempPassword(correlationId, userId, (err, password) => {
+            timing.endTiming();
+            callback(err, password);
+        });
     }
     setPassword(correlationId, userId, password, callback) {
         let timing = this.instrument(correlationId, 'passwords.set_password');
@@ -37,6 +51,13 @@ class PasswordsDirectClientV1 extends pip_services_net_node_1.DirectClient {
         this._controller.changePassword(correlationId, userId, oldPassword, newPassword, (err) => {
             timing.endTiming();
             callback(err);
+        });
+    }
+    validateCode(correlationId, userId, code, callback) {
+        let timing = this.instrument(correlationId, 'passwords.validate_code');
+        this._controller.validateCode(correlationId, userId, code, (err, valid) => {
+            timing.endTiming();
+            callback(err, valid);
         });
     }
     resetPassword(correlationId, userId, code, password, callback) {

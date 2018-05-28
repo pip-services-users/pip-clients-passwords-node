@@ -11,7 +11,7 @@ import { IPasswordsClientV1 } from './IPasswordsClientV1';
 export class PasswordsHttpClientV1 extends CommandableHttpClient implements IPasswordsClientV1 {
 
     constructor(config?: any) {
-        super('passwords');
+        super('v1/passwords');
 
         if (config != null)
             this.configure(ConfigParams.fromValue(config));

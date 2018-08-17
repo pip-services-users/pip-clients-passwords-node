@@ -1,4 +1,4 @@
-import { CommandableSenecaClient } from 'pip-services-net-node';
+import { CommandableSenecaClient } from 'pip-services-seneca-node';
 import { UserPasswordInfoV1 } from './UserPasswordInfoV1';
 import { IPasswordsClientV1 } from './IPasswordsClientV1';
 export declare class PasswordsSenecaClientV1 extends CommandableSenecaClient implements IPasswordsClientV1 {

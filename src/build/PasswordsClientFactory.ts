@@ -1,5 +1,5 @@
 import { Descriptor } from 'pip-services-commons-node';
-import { Factory } from 'pip-services-commons-node';
+import { Factory } from 'pip-services-components-node';
 
 import { PasswordsNullClientV1 } from '../version1/PasswordsNullClientV1';
 import { PasswordsDirectClientV1 } from '../version1/PasswordsDirectClientV1';

@@ -1,4 +1,4 @@
-import { DirectClient } from 'pip-services-net-node';
+import { DirectClient } from 'pip-services-rpc-node';
 import { UserPasswordInfoV1 } from './UserPasswordInfoV1';
 import { IPasswordsClientV1 } from './IPasswordsClientV1';
 export declare class PasswordsDirectClientV1 extends DirectClient<any> implements IPasswordsClientV1 {

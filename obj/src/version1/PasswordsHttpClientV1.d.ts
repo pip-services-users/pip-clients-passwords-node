@@ -1,4 +1,4 @@
-import { CommandableHttpClient } from 'pip-services-net-node';
+import { CommandableHttpClient } from 'pip-services-rpc-node';
 import { UserPasswordInfoV1 } from './UserPasswordInfoV1';
 import { IPasswordsClientV1 } from './IPasswordsClientV1';
 export declare class PasswordsHttpClientV1 extends CommandableHttpClient implements IPasswordsClientV1 {

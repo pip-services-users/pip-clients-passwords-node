@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const pip_services_commons_node_1 = require("pip-services-commons-node");
-const pip_services_commons_node_2 = require("pip-services-commons-node");
+const pip_services_components_node_1 = require("pip-services-components-node");
 const PasswordsNullClientV1_1 = require("../version1/PasswordsNullClientV1");
 const PasswordsDirectClientV1_1 = require("../version1/PasswordsDirectClientV1");
 const PasswordsHttpClientV1_1 = require("../version1/PasswordsHttpClientV1");
 const PasswordsSenecaClientV1_1 = require("../version1/PasswordsSenecaClientV1");
-class PasswordsClientFactory extends pip_services_commons_node_2.Factory {
+class PasswordsClientFactory extends pip_services_components_node_1.Factory {
     constructor() {
         super();
         this.registerAsType(PasswordsClientFactory.NullClientV1Descriptor, PasswordsNullClientV1_1.PasswordsNullClientV1);

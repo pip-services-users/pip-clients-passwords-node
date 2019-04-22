@@ -1,4 +1,4 @@
-import { CommandableLambdaClient } from 'pip-services-aws-node';
+import { CommandableLambdaClient } from 'pip-services3-aws-node';
 import { UserPasswordInfoV1 } from './UserPasswordInfoV1';
 import { IPasswordsClientV1 } from './IPasswordsClientV1';
 export declare class PasswordsLambdaClientV1 extends CommandableLambdaClient implements IPasswordsClientV1 {

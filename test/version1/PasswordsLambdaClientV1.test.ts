@@ -1,6 +1,6 @@
 let process = require('process');
 
-import { ConfigParams } from 'pip-services-commons-node';
+import { ConfigParams } from 'pip-services3-commons-node';
 
 import { PasswordsClientFixtureV1 } from './PasswordsClientFixtureV1';
 import { PasswordsLambdaClientV1 } from '../../src/version1/PasswordsLambdaClientV1';

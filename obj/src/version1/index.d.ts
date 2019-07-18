@@ -5,3 +5,5 @@ export { PasswordsHttpClientV1 } from './PasswordsHttpClientV1';
 export { PasswordsLambdaClientV1 } from './PasswordsLambdaClientV1';
 export { PasswordsDirectClientV1 } from './PasswordsDirectClientV1';
 export { PasswordsNullClientV1 } from './PasswordsNullClientV1';
+export { PasswordsCommandableGrpcClientV1 } from './PasswordsCommandableGrpcClientV1';
+export { PasswordsGrpcClientV1 } from './PasswordsGrpcClientV1';

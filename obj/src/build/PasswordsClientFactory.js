@@ -19,6 +19,7 @@ class PasswordsClientFactory extends pip_services3_components_node_1.Factory {
         this.registerAsType(PasswordsClientFactory.GrpcClientV1Descriptor, PasswordsGrpcClientV1_1.PasswordsGrpcClientV1);
     }
 }
+exports.PasswordsClientFactory = PasswordsClientFactory;
 PasswordsClientFactory.Descriptor = new pip_services3_commons_node_1.Descriptor('pip-services-passwords', 'factory', 'default', 'default', '1.0');
 PasswordsClientFactory.NullClientV1Descriptor = new pip_services3_commons_node_1.Descriptor('pip-services-passwords', 'client', 'null', 'default', '1.0');
 PasswordsClientFactory.DirectClientV1Descriptor = new pip_services3_commons_node_1.Descriptor('pip-services-passwords', 'client', 'direct', 'default', '1.0');
@@ -26,5 +27,4 @@ PasswordsClientFactory.HttpClientV1Descriptor = new pip_services3_commons_node_1
 PasswordsClientFactory.LambdaClientV1Descriptor = new pip_services3_commons_node_1.Descriptor('pip-services-passwords', 'client', 'lambda', 'default', '1.0');
 PasswordsClientFactory.CommandableGrpcClientV1Descriptor = new pip_services3_commons_node_1.Descriptor('pip-services-passwords', 'client', 'commandable-grpc', 'default', '1.0');
 PasswordsClientFactory.GrpcClientV1Descriptor = new pip_services3_commons_node_1.Descriptor('pip-services-passwords', 'client', 'grpc', 'default', '1.0');
-exports.PasswordsClientFactory = PasswordsClientFactory;
 //# sourceMappingURL=PasswordsClientFactory.js.map
